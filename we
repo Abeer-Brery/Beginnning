@@ -1,0 +1,95 @@
+package voxel;
+
+public class PhantomModel extends Model {
+
+	private HeatPoint[] heatPoints;
+
+	public PhantomModel(float minX, float minY, float minZ, float incX,
+			float incY, float incZ, float[][] points) {
+
+		super(minX, minY, minZ, incX, incY, incZ);
+
+		resX = resY = resZ = 256;
+		
+		this.heatPoints = new HeatPoint[points.length];
+		for (int n = 0; n < points.length; n++) {
+			heatPoints[n] = new HeatPoint(points[n]);
+		}
+	}
+
+	private float distance(float x1, float y1, float z1, 
+						   float x2, float y2, float z2) {
+
+		float d = 0.0f;
+		
+		
+		//TODO: IMPLEMENT THIS
+		float dx=x1-x2;
+		float dy=y1-y2;
+		float dz=z1-z2;
+		
+		float dx2=dx*dx;
+		float dy2=dy*dy;
+		float dz2=dz*dz;
+		
+		d= (float) Math.sqrt(dx2+dy2+dz2);
+		return d;
+	}
+
+	private int contribution(float x, float y, float z, int p) {
+
+		int v = 0;
+		HeatPoint h = heatPoints[p];
+
+		float d = distance(x, y, z, h.x, h.y, h.z);
+		
+		//TODO: IMPLEMENT THIS
+			if(d<=h.radius) {
+				float vf= (h.radius-d) * h.value /h.radius;
+				v = (int) vf;
+				
+			}
+		
+		
+		return v;
+	}
+
+	public void createVoxelModel() {
+
+		voxels = new int[resX][resY][resZ];
+		histogram = new int[256];
+		
+		for(int i=0; i<resX; i++ ) {
+			float i2= minX + i*incX;
+		
+			for(int j=0; j<resY; j++ ) {
+				float j2= minX + j*incY;
+				
+				for(int k=0; i<resZ; k++ ) {
+					float k2= minX + k*incZ;
+						for (int p=0; p<heatPoints.length; p++)
+						voxels[i][j][k]=contribution(i2,j2,k2,p );
+				}
+			}
+		}
+			
+	
+		//TODO: IMPLEMENT THIS
+	}
+
+	
+	class HeatPoint {
+		
+		private float x, y, z, radius, value;
+
+		public HeatPoint(float[] floats) {
+			
+			x = floats[0];
+			y = floats[1];
+			z = floats[2];
+			radius = floats[3];
+			value = floats[4];
+		}
+	}
+
+}
